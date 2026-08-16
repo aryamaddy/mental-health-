@@ -322,6 +322,42 @@
                         </div>
                     </div>
 
+                    <!-- 24-Hour Time Budget Breakdown -->
+                    <div class="time-budget" id="time-budget">
+                        <div class="time-budget-header">
+                            <h4><i class="fa-solid fa-clock"></i> 24-Hour Day Breakdown</h4>
+                            <span class="time-budget-remaining" id="time-remaining">Free: <strong>7.0h</strong></span>
+                        </div>
+                        <div class="time-budget-bar">
+                            <div class="tb-segment tb-social" id="tb-social" style="width: 16.67%;" title="Social Media">
+                                <span class="tb-label">📱</span>
+                            </div>
+                            <div class="tb-segment tb-sleep" id="tb-sleep" style="width: 29.17%;" title="Sleep">
+                                <span class="tb-label">🌙</span>
+                            </div>
+                            <div class="tb-segment tb-study" id="tb-study" style="width: 18.75%;" title="Study">
+                                <span class="tb-label">📚</span>
+                            </div>
+                            <div class="tb-segment tb-activity" id="tb-activity" style="width: 6.25%;" title="Activity">
+                                <span class="tb-label">🏃</span>
+                            </div>
+                            <div class="tb-segment tb-free" id="tb-free" style="width: 29.17%;" title="Daily Work / Other">
+                                <span class="tb-label">💼</span>
+                            </div>
+                        </div>
+                        <div class="time-budget-legend">
+                            <div class="tb-legend-item"><span class="tb-dot tb-social-dot"></span> Social Media: <strong id="tb-social-val">4.0h</strong></div>
+                            <div class="tb-legend-item"><span class="tb-dot tb-sleep-dot"></span> Sleep: <strong id="tb-sleep-val">7.0h</strong></div>
+                            <div class="tb-legend-item"><span class="tb-dot tb-study-dot"></span> Study: <strong id="tb-study-val">4.5h</strong></div>
+                            <div class="tb-legend-item"><span class="tb-dot tb-activity-dot"></span> Activity: <strong id="tb-activity-val">1.5h</strong></div>
+                            <div class="tb-legend-item"><span class="tb-dot tb-free-dot"></span> Daily Work: <strong id="tb-free-val">7.0h</strong></div>
+                        </div>
+                        <div class="time-budget-warning hidden" id="time-warning">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span>Total exceeds 24 hours! Please adjust your values.</span>
+                        </div>
+                    </div>
+
                     <div class="step-actions">
                         <button type="button" class="btn btn-ghost back-btn"><i class="fa-solid fa-chevron-left"></i> Back</button>
                         <button type="submit" class="btn btn-hero submit-btn">

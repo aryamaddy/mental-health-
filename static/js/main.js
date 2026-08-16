@@ -61,12 +61,81 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Update gradient fill on range track
                 const pct = ((e.target.value - e.target.min) / (e.target.max - e.target.min)) * 100;
                 e.target.style.background = `linear-gradient(90deg, rgba(99,102,241,0.5) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
+                // Update 24-hour time budget
+                updateTimeBudget();
             });
             // Init gradient on load
             const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
             slider.style.background = `linear-gradient(90deg, rgba(99,102,241,0.5) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
         }
     });
+
+    // ─── 24-Hour Time Budget Calculator ───
+    function updateTimeBudget() {
+        const social = parseFloat(document.getElementById('Avg_Daily_Usage_Hours')?.value || 4);
+        const sleep = parseFloat(document.getElementById('Sleep_Hours_Per_Night')?.value || 7);
+        const study = parseFloat(document.getElementById('Study_Hours')?.value || 4.5);
+        const activity = parseFloat(document.getElementById('Physical_Activity_Hours')?.value || 1.5);
+        
+        const used = social + sleep + study + activity;
+        const free = Math.max(0, 24 - used);
+        const isOverflow = used > 24;
+
+        // Update bar segments (as % of 24)
+        const toPercent = (val) => ((val / 24) * 100).toFixed(2) + '%';
+        
+        const tbSocial = document.getElementById('tb-social');
+        const tbSleep = document.getElementById('tb-sleep');
+        const tbStudy = document.getElementById('tb-study');
+        const tbActivity = document.getElementById('tb-activity');
+        const tbFree = document.getElementById('tb-free');
+
+        if (tbSocial) tbSocial.style.width = toPercent(social);
+        if (tbSleep) tbSleep.style.width = toPercent(sleep);
+        if (tbStudy) tbStudy.style.width = toPercent(study);
+        if (tbActivity) tbActivity.style.width = toPercent(activity);
+        if (tbFree) tbFree.style.width = isOverflow ? '0%' : toPercent(free);
+
+        // Update legend values
+        const setVal = (id, val) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = val.toFixed(1) + 'h';
+        };
+        setVal('tb-social-val', social);
+        setVal('tb-sleep-val', sleep);
+        setVal('tb-study-val', study);
+        setVal('tb-activity-val', activity);
+        setVal('tb-free-val', free);
+
+        // Update remaining text
+        const remainEl = document.getElementById('time-remaining');
+        if (remainEl) {
+            if (isOverflow) {
+                remainEl.innerHTML = `Overflow: <strong>-${(used - 24).toFixed(1)}h</strong>`;
+                remainEl.classList.add('overflow');
+            } else {
+                remainEl.innerHTML = `Daily Work/Free: <strong>${free.toFixed(1)}h</strong>`;
+                remainEl.classList.remove('overflow');
+            }
+        }
+
+        // Warning
+        const warningEl = document.getElementById('time-warning');
+        if (warningEl) {
+            warningEl.classList.toggle('hidden', !isOverflow);
+        }
+
+        // Disable submit button if overflow
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.disabled = isOverflow;
+            submitBtn.style.opacity = isOverflow ? '0.4' : '1';
+            submitBtn.style.cursor = isOverflow ? 'not-allowed' : 'pointer';
+        }
+    }
+
+    // Initialize on load
+    updateTimeBudget();
 
     // ═══════════════════════════════════════════════════
     // 1. REGISTRATION FORM
