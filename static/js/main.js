@@ -1,59 +1,76 @@
-// MindPulse Survey & ML Inference Logic
+// ═══════════════════════════════════════════════════════
+// MindPulse – Premium Survey & ML Inference Logic
+// ═══════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Application State Variables
+
+    // ─── State ───
     let currentStep = 1;
     const totalSteps = 3;
     let userName = 'Friend';
     let userAge = 20;
     let radarChartInstance = null;
 
-    // DOM Elements - Screens
+    // ─── DOM Elements ───
     const welcomeScreen = document.getElementById('welcome-screen');
     const surveyScreen = document.getElementById('survey-screen');
     const resultsScreen = document.getElementById('results-screen');
     const loadingOverlay = document.getElementById('loading-overlay');
-
-    // DOM Elements - Forms & Inputs
     const registrationForm = document.getElementById('registration-form');
     const surveyForm = document.getElementById('survey-form');
     const userNameInput = document.getElementById('user_name');
     const regAgeInput = document.getElementById('reg_age');
     const displayUserName = document.getElementById('display-user-name');
     const resUserName = document.getElementById('res-user-name');
-
-    // Progress Elements
     const progressFill = document.getElementById('progress-fill');
-    const currentStepNum = document.getElementById('current-step-num');
+    const userAvatar = document.getElementById('user-avatar');
+    const stepPills = document.querySelectorAll('.step-pill');
 
-    // Range Sliders & Value Display Sync
-    const usageSlider = document.getElementById('Avg_Daily_Usage_Hours');
-    const usageVal = document.getElementById('usage_val');
-    
-    const studySlider = document.getElementById('Study_Hours');
-    const studyVal = document.getElementById('study_val');
-
-    const activitySlider = document.getElementById('Physical_Activity_Hours');
-    const activityVal = document.getElementById('activity_val');
-
-    const sleepSlider = document.getElementById('Sleep_Hours_Per_Night');
-    const sleepVal = document.getElementById('sleep_val');
-
-    if (usageSlider && usageVal) {
-        usageSlider.addEventListener('input', (e) => usageVal.textContent = parseFloat(e.target.value).toFixed(1));
+    // ─── Floating Particles Generator ───
+    function createParticles() {
+        const container = document.getElementById('particles-container');
+        if (!container) return;
+        const count = window.innerWidth < 768 ? 15 : 35;
+        for (let i = 0; i < count; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDuration = (8 + Math.random() * 15) + 's';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            p.style.width = p.style.height = (2 + Math.random() * 3) + 'px';
+            p.style.opacity = (0.2 + Math.random() * 0.4).toString();
+            container.appendChild(p);
+        }
     }
-    if (studySlider && studyVal) {
-        studySlider.addEventListener('input', (e) => studyVal.textContent = parseFloat(e.target.value).toFixed(1));
-    }
-    if (activitySlider && activityVal) {
-        activitySlider.addEventListener('input', (e) => activityVal.textContent = parseFloat(e.target.value).toFixed(2));
-    }
-    if (sleepSlider && sleepVal) {
-        sleepSlider.addEventListener('input', (e) => sleepVal.textContent = parseFloat(e.target.value).toFixed(1));
-    }
+    createParticles();
 
-    // 1. REGISTRATION FORM SUBMIT
+    // ─── Range Slider Sync ───
+    const sliders = [
+        { id: 'Avg_Daily_Usage_Hours', valId: 'usage_val', decimals: 1 },
+        { id: 'Study_Hours', valId: 'study_val', decimals: 1 },
+        { id: 'Physical_Activity_Hours', valId: 'activity_val', decimals: 1 },
+        { id: 'Sleep_Hours_Per_Night', valId: 'sleep_val', decimals: 1 }
+    ];
+
+    sliders.forEach(({ id, valId, decimals }) => {
+        const slider = document.getElementById(id);
+        const display = document.getElementById(valId);
+        if (slider && display) {
+            slider.addEventListener('input', (e) => {
+                display.textContent = parseFloat(e.target.value).toFixed(decimals);
+                // Update gradient fill on range track
+                const pct = ((e.target.value - e.target.min) / (e.target.max - e.target.min)) * 100;
+                e.target.style.background = `linear-gradient(90deg, rgba(99,102,241,0.5) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
+            });
+            // Init gradient on load
+            const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+            slider.style.background = `linear-gradient(90deg, rgba(99,102,241,0.5) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
+        }
+    });
+
+    // ═══════════════════════════════════════════════════
+    // 1. REGISTRATION FORM
+    // ═══════════════════════════════════════════════════
     if (registrationForm) {
         registrationForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -62,34 +79,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (displayUserName) displayUserName.textContent = userName;
             if (resUserName) resUserName.textContent = userName;
+            if (userAvatar) userAvatar.textContent = userName.charAt(0).toUpperCase();
 
-            // Transition Screen
-            welcomeScreen.classList.remove('active-screen');
-            welcomeScreen.classList.add('hidden-screen');
-            
-            surveyScreen.classList.remove('hidden-screen');
-            surveyScreen.classList.add('active-screen');
-            
+            // Transition
+            switchScreen(welcomeScreen, surveyScreen);
             updateStepDisplay(1);
         });
     }
 
-    // 2. STEP NAVIGATION LOGIC
-    const nextButtons = document.querySelectorAll('.next-btn');
-    const backButtons = document.querySelectorAll('.back-btn');
-
-    nextButtons.forEach(btn => {
+    // ═══════════════════════════════════════════════════
+    // 2. STEP NAVIGATION
+    // ═══════════════════════════════════════════════════
+    document.querySelectorAll('.next-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            if (validateCurrentStep(currentStep)) {
-                if (currentStep < totalSteps) {
-                    currentStep++;
-                    updateStepDisplay(currentStep);
-                }
+            if (validateCurrentStep(currentStep) && currentStep < totalSteps) {
+                currentStep++;
+                updateStepDisplay(currentStep);
             }
         });
     });
 
-    backButtons.forEach(btn => {
+    document.querySelectorAll('.back-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             if (currentStep > 1) {
                 currentStep--;
@@ -100,29 +110,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateStepDisplay(step) {
         currentStep = step;
-        
-        // Update Step Containers
-        const steps = document.querySelectorAll('.survey-step');
-        steps.forEach(st => {
-            const stepNum = parseInt(st.getAttribute('data-step'));
-            if (stepNum === currentStep) {
-                st.classList.add('active-step');
-            } else {
-                st.classList.remove('active-step');
-            }
+
+        // Show/hide steps
+        document.querySelectorAll('.survey-step').forEach(st => {
+            const num = parseInt(st.getAttribute('data-step'));
+            st.classList.toggle('active-step', num === currentStep);
         });
 
-        // Update Progress Fill %
-        const percentage = Math.round((currentStep / totalSteps) * 100);
-        if (progressFill) progressFill.style.width = `${percentage}%`;
-        if (currentStepNum) currentStepNum.textContent = currentStep;
+        // Progress bar
+        const pct = Math.round((currentStep / totalSteps) * 100);
+        if (progressFill) progressFill.style.width = `${pct}%`;
+
+        // Step pills
+        stepPills.forEach(pill => {
+            const pillNum = parseInt(pill.getAttribute('data-pill'));
+            pill.classList.remove('active', 'completed');
+            if (pillNum === currentStep) pill.classList.add('active');
+            else if (pillNum < currentStep) pill.classList.add('completed');
+        });
     }
 
     function validateCurrentStep(step) {
-        const activeStepElement = document.querySelector(`.survey-step[data-step="${step}"]`);
-        if (!activeStepElement) return true;
-
-        const inputs = activeStepElement.querySelectorAll('input[required], select[required]');
+        const el = document.querySelector(`.survey-step[data-step="${step}"]`);
+        if (!el) return true;
+        const inputs = el.querySelectorAll('input[required], select[required]');
         for (let input of inputs) {
             if (!input.checkValidity()) {
                 input.reportValidity();
@@ -132,14 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
-    // 3. SURVEY FORM SUBMIT & ML API CALL
+    // ═══════════════════════════════════════════════════
+    // 3. SURVEY SUBMIT & ML API CALL
+    // ═══════════════════════════════════════════════════
     if (surveyForm) {
         surveyForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
             if (!validateCurrentStep(currentStep)) return;
 
-            // Show Loading Spinner
             loadingOverlay.classList.remove('hidden');
 
             const payload = {
@@ -172,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     alert(`Error: ${result.error || 'Failed to analyze survey model inputs.'}`);
                 }
-
             } catch (err) {
                 console.error("API error:", err);
                 alert("Network error connecting to the ML backend server.");
@@ -182,61 +192,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 4. RENDER DASHBOARD RESULTS & CHARTS
+    // ═══════════════════════════════════════════════════
+    // 4. RENDER DASHBOARD
+    // ═══════════════════════════════════════════════════
     function renderDashboardResults(result) {
         const data = result.data;
 
-        // Transition Screen
-        surveyScreen.classList.remove('active-screen');
-        surveyScreen.classList.add('hidden-screen');
+        switchScreen(surveyScreen, resultsScreen);
 
-        resultsScreen.classList.remove('hidden-screen');
-        resultsScreen.classList.add('active-screen');
-
-        // Render Model Info
+        // Model Info
         const modelNameEl = document.getElementById('model-display-name');
         const modelTypeEl = document.getElementById('model-display-type');
-        if (modelNameEl && result.model_name) {
-            modelNameEl.textContent = result.model_name;
-        }
-        if (modelTypeEl && result.model_type) {
-            modelTypeEl.textContent = result.model_type;
-        }
+        if (modelNameEl && result.model_name) modelNameEl.textContent = result.model_name;
+        if (modelTypeEl && result.model_type) modelTypeEl.textContent = result.model_type;
 
-        // Render Score Counter Animation
+        // Score Animation
         const scoreNumEl = document.getElementById('score-display-num');
         const targetScore = data.score;
-        animateNumber(scoreNumEl, 0, targetScore, 1200);
+        animateNumber(scoreNumEl, 0, targetScore, 1500);
 
-        // Render Circle SVG Progress Gauge
+        // Circle SVG Progress
         const circle = document.getElementById('score-progress-circle');
         if (circle) {
-            const circumference = 2 * Math.PI * 42; // r=42 -> 263.89
-            const strokeDashoffset = circumference - (targetScore / 10.0) * circumference;
+            const circumference = 2 * Math.PI * 50; // r=50 -> 314.16
+            const offset = circumference - (targetScore / 10.0) * circumference;
             circle.style.strokeDasharray = `${circumference}`;
-            circle.style.strokeDashoffset = `${strokeDashoffset}`;
-            circle.style.stroke = data.status_color || '#a855f7';
+            // Delay slightly for animation effect
+            requestAnimationFrame(() => {
+                circle.style.strokeDashoffset = `${offset}`;
+            });
         }
 
-        // Render Status Badge & Summary
+        // Status Badge
         const badgeEl = document.getElementById('status-badge');
         if (badgeEl) {
             badgeEl.textContent = data.badge_text;
-            badgeEl.style.backgroundColor = `${data.status_color}22`;
+            badgeEl.style.backgroundColor = `${data.status_color}18`;
             badgeEl.style.color = data.status_color;
-            badgeEl.style.border = `1px solid ${data.status_color}55`;
+            badgeEl.style.border = `1px solid ${data.status_color}40`;
         }
 
+        // Summary
         const summaryEl = document.getElementById('summary-text');
         if (summaryEl) summaryEl.textContent = data.summary;
 
-        // Render Recommendations Cards
+        // Recommendations
         const tipsGrid = document.getElementById('recommendations-grid');
         if (tipsGrid) {
             tipsGrid.innerHTML = '';
-            data.tips.forEach(tip => {
+            data.tips.forEach((tip, i) => {
                 const card = document.createElement('div');
                 card.className = 'tip-card';
+                card.style.animationDelay = `${i * 0.1}s`;
+                card.style.animation = `screenIn 0.5s var(--ease-out) ${i * 0.1}s both`;
                 card.innerHTML = `
                     <div class="tip-icon"><i class="fa-solid ${tip.icon}"></i></div>
                     <div class="tip-content">
@@ -248,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Render Chart.js Radar
+        // Radar Chart
         renderRadarChart(data.sub_scores);
     }
 
@@ -257,11 +265,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            const currentVal = (progress * (end - start) + start).toFixed(1);
-            element.textContent = currentVal;
-            if (progress < 1) {
-                window.requestAnimationFrame(step);
-            }
+            // Ease out cubic
+            const eased = 1 - Math.pow(1 - progress, 3);
+            element.textContent = (eased * (end - start) + start).toFixed(1);
+            if (progress < 1) window.requestAnimationFrame(step);
         };
         window.requestAnimationFrame(step);
     }
@@ -269,28 +276,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderRadarChart(subScores) {
         const ctx = document.getElementById('wellnessRadarChart');
         if (!ctx) return;
-
-        if (radarChartInstance) {
-            radarChartInstance.destroy();
-        }
+        if (radarChartInstance) radarChartInstance.destroy();
 
         radarChartInstance = new Chart(ctx, {
             type: 'radar',
             data: {
                 labels: ['Sleep Health', 'Digital Balance', 'Physical Vitality', 'Stress Resilience'],
                 datasets: [{
-                    label: 'Your Health Score (%)',
+                    label: 'Your Score (%)',
                     data: [
                         subScores.sleep_health || 50,
                         subScores.digital_detox || 50,
                         subScores.physical_vitality || 50,
                         subScores.stress_resilience || 50
                     ],
-                    backgroundColor: 'rgba(168, 85, 247, 0.25)',
-                    borderColor: '#a855f7',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                    borderColor: '#6366f1',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#a855f7',
                     pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
                     pointHoverBackgroundColor: '#fff',
                     pointHoverBorderColor: '#6366f1'
                 }]
@@ -300,43 +307,85 @@ document.addEventListener('DOMContentLoaded', () => {
                 maintainAspectRatio: false,
                 scales: {
                     r: {
-                        angleLines: { color: 'rgba(255, 255, 255, 0.1)' },
-                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        angleLines: { color: 'rgba(255, 255, 255, 0.08)' },
+                        grid: { color: 'rgba(255, 255, 255, 0.06)', lineWidth: 1 },
                         pointLabels: {
-                            color: '#e5e7eb',
-                            font: { family: 'Outfit', size: 12, weight: '500' }
+                            color: '#94a3b8',
+                            font: { family: 'Outfit', size: 12, weight: '600' }
                         },
                         ticks: {
-                            color: '#9ca3af',
+                            color: '#64748b',
                             backdropColor: 'transparent',
-                            stepSize: 20
+                            stepSize: 20,
+                            font: { size: 10 }
                         },
                         suggestedMin: 0,
                         suggestedMax: 100
                     }
                 },
                 plugins: {
-                    legend: {
-                        display: false
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(12, 17, 29, 0.95)',
+                        borderColor: 'rgba(99, 102, 241, 0.3)',
+                        borderWidth: 1,
+                        titleFont: { family: 'Outfit', weight: '600' },
+                        bodyFont: { family: 'Inter' },
+                        cornerRadius: 8,
+                        padding: 12
                     }
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
                 }
             }
         });
     }
 
-    // 5. RETAKE BUTTON LOGIC
+    // ═══════════════════════════════════════════════════
+    // 5. RETAKE
+    // ═══════════════════════════════════════════════════
     const retakeBtn = document.getElementById('retake-btn');
     if (retakeBtn) {
         retakeBtn.addEventListener('click', () => {
-            resultsScreen.classList.remove('active-screen');
-            resultsScreen.classList.add('hidden-screen');
-
-            welcomeScreen.classList.remove('hidden-screen');
-            welcomeScreen.classList.add('active-screen');
-
+            switchScreen(resultsScreen, welcomeScreen);
             if (surveyForm) surveyForm.reset();
-            updateStepDisplay(1);
+            currentStep = 1;
+            // Reset slider visuals
+            sliders.forEach(({ id }) => {
+                const slider = document.getElementById(id);
+                if (slider) {
+                    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
+                    slider.style.background = `linear-gradient(90deg, rgba(99,102,241,0.5) ${pct}%, rgba(255,255,255,0.08) ${pct}%)`;
+                }
+            });
         });
     }
 
+    // ─── Helpers ───
+    function switchScreen(from, to) {
+        from.classList.remove('active-screen');
+        from.classList.add('hidden-screen');
+        to.classList.remove('hidden-screen');
+        to.classList.add('active-screen');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ─── Navbar Scroll Effect ───
+    const navbar = document.getElementById('navbar');
+    if (navbar) {
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            if (scrollY > 50) {
+                navbar.style.background = 'rgba(6, 8, 15, 0.92)';
+                navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.3)';
+            } else {
+                navbar.style.background = 'rgba(6, 8, 15, 0.7)';
+                navbar.style.boxShadow = 'none';
+            }
+            lastScroll = scrollY;
+        });
+    }
 });

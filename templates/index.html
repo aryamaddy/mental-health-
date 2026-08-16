@@ -3,241 +3,331 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MindPulse | AI Mental Health & Lifestyle Survey</title>
+    <title>MindPulse | AI-Powered Mental Health Assessment</title>
+    <meta name="description" content="MindPulse uses ML to analyze your social media habits, sleep, activity, and stress to compute a personalized Mental Health Score.">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <div class="bg-glow-container">
-        <div class="glow-orb orb-1"></div>
-        <div class="glow-orb orb-2"></div>
-        <div class="glow-orb orb-3"></div>
+
+    <!-- Animated Mesh Gradient Background -->
+    <div class="bg-mesh">
+        <div class="mesh-gradient"></div>
+        <div class="floating-particles" id="particles-container"></div>
     </div>
 
     <!-- Navigation Header -->
-    <header class="navbar">
+    <header class="navbar" id="navbar">
         <div class="container nav-content">
-            <div class="brand">
-                <i class="fa-solid fa-brain brand-icon"></i>
-                <span class="brand-name">Mind<span class="highlight">Pulse</span> AI</span>
-            </div>
-            <div class="nav-tagline">
-                <span class="badge"><i class="fa-solid fa-shield-halved"></i> ML Model Powered</span>
-            </div>
+            <a href="#" class="brand" id="brand-logo">
+                <div class="brand-icon-wrap">
+                    <i class="fa-solid fa-brain"></i>
+                    <div class="brand-pulse"></div>
+                </div>
+                <span class="brand-name">Mind<span class="gradient-text">Pulse</span></span>
+            </a>
+            <nav class="nav-links">
+                <span class="nav-badge"><i class="fa-solid fa-microchip"></i> ML Powered</span>
+                <span class="nav-badge accent"><i class="fa-solid fa-shield-halved"></i> Private & Secure</span>
+            </nav>
         </div>
     </header>
 
     <main class="main-container container">
         
-        <!-- SECTION 1: WELCOME & REGISTRATION SCREEN -->
-        <section id="welcome-screen" class="glass-card active-screen">
-            <div class="hero-content">
-                <div class="hero-badge"><i class="fa-solid fa-sparkles"></i> AI Mental Wellness Assessment</div>
-                <h1 class="hero-title">Understand Your Digital Well-Being & Mental Balance</h1>
-                <p class="hero-subtitle">
-                    Take our dataset-trained 2-minute survey. Our machine learning model analyzes your social media habits, sleep, physical activity, and stress levels to compute your personalized Mental Health Score.
-                </p>
-                
-                <form id="registration-form" class="registration-form">
-                    <div class="input-group">
-                        <label for="user_name"><i class="fa-solid fa-user"></i> Full Name</label>
-                        <input type="text" id="user_name" placeholder="Enter your name..." required autocomplete="name">
+        <!-- ═══════ SECTION 1: WELCOME HERO ═══════ -->
+        <section id="welcome-screen" class="screen active-screen">
+            <div class="hero-layout">
+                <div class="hero-left">
+                    <div class="hero-chip"><i class="fa-solid fa-sparkles"></i> AI Mental Wellness Assessment</div>
+                    <h1 class="hero-title">
+                        Understand Your<br>
+                        <span class="gradient-text-lg">Digital Well-Being</span><br>
+                        & Mental Balance
+                    </h1>
+                    <p class="hero-subtitle">
+                        Our machine learning model analyzes your social media habits, sleep patterns, physical activity, and stress levels to compute your personalized <strong>Mental Health Score</strong>.
+                    </p>
+                    
+                    <form id="registration-form" class="reg-form">
+                        <div class="reg-row">
+                            <div class="floating-input">
+                                <input type="text" id="user_name" placeholder=" " required autocomplete="name">
+                                <label for="user_name"><i class="fa-solid fa-user"></i> Your Name</label>
+                                <div class="input-glow"></div>
+                            </div>
+                            <div class="floating-input">
+                                <input type="number" id="reg_age" min="12" max="100" placeholder=" " required>
+                                <label for="reg_age"><i class="fa-solid fa-cake-candles"></i> Age</label>
+                                <div class="input-glow"></div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-hero" id="start-btn">
+                            <span>Begin Assessment</span>
+                            <i class="fa-solid fa-arrow-right-long"></i>
+                            <div class="btn-shimmer"></div>
+                        </button>
+                    </form>
+                </div>
+                <div class="hero-right">
+                    <div class="hero-visual">
+                        <div class="visual-ring ring-1"></div>
+                        <div class="visual-ring ring-2"></div>
+                        <div class="visual-ring ring-3"></div>
+                        <div class="visual-center">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <span>MH Score</span>
+                        </div>
+                        <div class="orbit-dot dot-1"><i class="fa-solid fa-moon"></i></div>
+                        <div class="orbit-dot dot-2"><i class="fa-solid fa-dumbbell"></i></div>
+                        <div class="orbit-dot dot-3"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div class="orbit-dot dot-4"><i class="fa-solid fa-brain"></i></div>
                     </div>
-                    <div class="input-group">
-                        <label for="reg_age"><i class="fa-solid fa-cake-candles"></i> Age</label>
-                        <input type="number" id="reg_age" min="12" max="100" placeholder="e.g. 21" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-large">
-                        <span>Start Survey Assessment</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </form>
+                </div>
+            </div>
 
-                <div class="feature-badges">
-                    <div class="feature-item">
-                        <i class="fa-solid fa-bolt"></i>
-                        <span>Real-Time ML Inference</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fa-solid fa-chart-pie"></i>
-                        <span>Visual Benchmark Radar</span>
-                    </div>
-                    <div class="feature-item">
-                        <i class="fa-solid fa-lock"></i>
-                        <span>100% Private & Local</span>
-                    </div>
+            <div class="trust-bar">
+                <div class="trust-item">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Real-Time ML Inference</span>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Interactive Radar Chart</span>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>100% Private & Local</span>
+                </div>
+                <div class="trust-divider"></div>
+                <div class="trust-item">
+                    <i class="fa-solid fa-clock"></i>
+                    <span>2-Minute Survey</span>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 2: MULTI-STEP SURVEY QUESTIONNAIRE -->
-        <section id="survey-screen" class="glass-card hidden-screen">
-            <div class="survey-header">
-                <div class="user-greeting">
-                    <span>Survey Session for: <strong id="display-user-name">Friend</strong></span>
-                </div>
-                <div class="progress-container">
-                    <div class="progress-bar-bg">
-                        <div id="progress-fill" class="progress-fill" style="width: 33%;"></div>
+        <!-- ═══════ SECTION 2: MULTI-STEP SURVEY ═══════ -->
+        <section id="survey-screen" class="screen hidden-screen">
+            <div class="survey-top-bar">
+                <div class="survey-user-info">
+                    <div class="user-avatar" id="user-avatar">F</div>
+                    <div>
+                        <span class="survey-greeting">Assessment for</span>
+                        <strong id="display-user-name">Friend</strong>
                     </div>
-                    <div class="step-counter">Step <span id="current-step-num">1</span> of 3</div>
                 </div>
+                <div class="step-pills">
+                    <div class="step-pill active" data-pill="1"><span class="pill-num">1</span> Profile</div>
+                    <div class="step-pill" data-pill="2"><span class="pill-num">2</span> Digital</div>
+                    <div class="step-pill" data-pill="3"><span class="pill-num">3</span> Lifestyle</div>
+                </div>
+            </div>
+            
+            <div class="progress-track">
+                <div id="progress-fill" class="progress-fill" style="width: 33%;"></div>
             </div>
 
             <form id="survey-form">
                 
-                <!-- STEP 1: DEMOGRAPHICS & ACADEMICS -->
+                <!-- STEP 1: DEMOGRAPHICS -->
                 <div class="survey-step active-step" data-step="1">
-                    <h2 class="step-title"><i class="fa-solid fa-user-graduate"></i> Demographics & Background</h2>
-                    <p class="step-desc">Tell us a bit about your background and academic level.</p>
+                    <div class="step-header">
+                        <div class="step-icon-circle"><i class="fa-solid fa-user-graduate"></i></div>
+                        <div>
+                            <h2 class="step-title">Demographics & Background</h2>
+                            <p class="step-desc">Tell us a bit about your background and academic level.</p>
+                        </div>
+                    </div>
 
                     <div class="form-grid">
-                        <div class="input-group">
+                        <div class="field-card">
                             <label for="Gender"><i class="fa-solid fa-venus-mars"></i> Gender</label>
-                            <select id="Gender" name="Gender" required>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
+                            <div class="select-wrap">
+                                <select id="Gender" name="Gender" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
                         </div>
 
-                        <div class="input-group">
+                        <div class="field-card">
                             <label for="Country"><i class="fa-solid fa-globe"></i> Country</label>
-                            <select id="Country" name="Country" required>
-                                <option value="India">India</option>
-                                <option value="USA">USA</option>
-                                <option value="Canada">Canada</option>
-                                <option value="Australia">Australia</option>
-                                <option value="UK">UK</option>
-                                <option value="Germany">Germany</option>
-                                <option value="Turkey">Turkey</option>
-                                <option value="Mexico">Mexico</option>
-                                <option value="France">France</option>
-                                <option value="Other">Other Country</option>
-                            </select>
+                            <div class="select-wrap">
+                                <select id="Country" name="Country" required>
+                                    <option value="India">India</option>
+                                    <option value="USA">USA</option>
+                                    <option value="Canada">Canada</option>
+                                    <option value="Australia">Australia</option>
+                                    <option value="UK">UK</option>
+                                    <option value="Germany">Germany</option>
+                                    <option value="Turkey">Turkey</option>
+                                    <option value="Mexico">Mexico</option>
+                                    <option value="France">France</option>
+                                    <option value="Other">Other Country</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
                         </div>
 
-                        <div class="input-group full-width">
+                        <div class="field-card full-width">
                             <label for="Academic_Level"><i class="fa-solid fa-graduation-cap"></i> Academic Level</label>
-                            <select id="Academic_Level" name="Academic_Level" required>
-                                <option value="High School">High School</option>
-                                <option value="Undergraduate" selected>Undergraduate Student</option>
-                                <option value="Graduate">Graduate / Master's</option>
-                                <option value="Doctorate">Doctorate / PhD</option>
-                                <option value="Other">Other / Working Professional</option>
-                            </select>
+                            <div class="select-wrap">
+                                <select id="Academic_Level" name="Academic_Level" required>
+                                    <option value="High School">High School</option>
+                                    <option value="Undergraduate" selected>Undergraduate Student</option>
+                                    <option value="Graduate">Graduate / Master's</option>
+                                    <option value="Doctorate">Doctorate / PhD</option>
+                                    <option value="Other">Other / Working Professional</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div class="step-actions">
-                        <button type="button" class="btn btn-secondary back-btn" disabled><i class="fa-solid fa-chevron-left"></i> Back</button>
-                        <button type="button" class="btn btn-primary next-btn"><span>Next Step: Digital Habits</span> <i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" class="btn btn-ghost back-btn" disabled><i class="fa-solid fa-chevron-left"></i> Back</button>
+                        <button type="button" class="btn btn-primary next-btn">
+                            <span>Digital Habits</span> <i class="fa-solid fa-arrow-right"></i>
+                            <div class="btn-shimmer"></div>
+                        </button>
                     </div>
                 </div>
 
-                <!-- STEP 2: DIGITAL & SOCIAL MEDIA HABITS -->
+                <!-- STEP 2: DIGITAL HABITS -->
                 <div class="survey-step" data-step="2">
-                    <h2 class="step-title"><i class="fa-solid fa-mobile-screen"></i> Social Media & Phone Habits</h2>
-                    <p class="step-desc">Share your screen time, daily unlocks, and favorite platforms.</p>
+                    <div class="step-header">
+                        <div class="step-icon-circle cyan"><i class="fa-solid fa-mobile-screen"></i></div>
+                        <div>
+                            <h2 class="step-title">Social Media & Phone Habits</h2>
+                            <p class="step-desc">Share your screen time, daily unlocks, and favorite platforms.</p>
+                        </div>
+                    </div>
 
                     <div class="form-grid">
-                        <div class="input-group">
-                            <label for="Most_Used_Platform"><i class="fa-solid fa-hashtag"></i> Primary Social Media Platform</label>
-                            <select id="Most_Used_Platform" name="Most_Used_Platform" required>
-                                <option value="Instagram">Instagram</option>
-                                <option value="YouTube">YouTube</option>
-                                <option value="Facebook">Facebook</option>
-                                <option value="LinkedIn">LinkedIn</option>
-                                <option value="Snapchat">Snapchat</option>
-                                <option value="TikTok">TikTok</option>
-                                <option value="Twitter / X">Twitter / X</option>
-                                <option value="WeChat">WeChat</option>
-                                <option value="Other">Other</option>
-                            </select>
+                        <div class="field-card">
+                            <label for="Most_Used_Platform"><i class="fa-solid fa-hashtag"></i> Primary Platform</label>
+                            <div class="select-wrap">
+                                <select id="Most_Used_Platform" name="Most_Used_Platform" required>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="YouTube">YouTube</option>
+                                    <option value="Facebook">Facebook</option>
+                                    <option value="LinkedIn">LinkedIn</option>
+                                    <option value="Snapchat">Snapchat</option>
+                                    <option value="TikTok">TikTok</option>
+                                    <option value="Twitter / X">Twitter / X</option>
+                                    <option value="WeChat">WeChat</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
                         </div>
 
-                        <div class="input-group">
-                            <label for="Purpose_Of_Use"><i class="fa-solid fa-bullseye"></i> Main Purpose of Use</label>
-                            <select id="Purpose_Of_Use" name="Purpose_Of_Use" required>
-                                <option value="Entertainment">Entertainment & Media</option>
-                                <option value="Education">Education & Study</option>
-                                <option value="Networking">Networking & Socializing</option>
-                                <option value="Gaming">Gaming & Leisure</option>
-                                <option value="Work / Business">Work / Business</option>
-                                <option value="Other">Other</option>
-                            </select>
+                        <div class="field-card">
+                            <label for="Purpose_Of_Use"><i class="fa-solid fa-bullseye"></i> Purpose of Use</label>
+                            <div class="select-wrap">
+                                <select id="Purpose_Of_Use" name="Purpose_Of_Use" required>
+                                    <option value="Entertainment">Entertainment & Media</option>
+                                    <option value="Education">Education & Study</option>
+                                    <option value="Networking">Networking & Socializing</option>
+                                    <option value="Gaming">Gaming & Leisure</option>
+                                    <option value="Work / Business">Work / Business</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
                         </div>
 
-                        <div class="input-group">
+                        <div class="field-card">
                             <label for="Avg_Daily_Usage_Hours">
-                                <i class="fa-solid fa-clock"></i> Daily Social Media Usage: <span id="usage_val" class="slider-val">4.0</span> hrs
+                                <i class="fa-solid fa-clock"></i> Daily Usage: <span id="usage_val" class="slider-val">4.0</span> hrs
                             </label>
                             <input type="range" id="Avg_Daily_Usage_Hours" name="Avg_Daily_Usage_Hours" min="0.5" max="15" step="0.5" value="4.0">
+                            <div class="range-labels"><span>0.5h</span><span>15h</span></div>
                         </div>
 
-                        <div class="input-group">
-                            <label for="Daily_Unlocks"><i class="fa-solid fa-lock-open"></i> Daily Phone Unlocks (Estimate)</label>
+                        <div class="field-card">
+                            <label for="Daily_Unlocks"><i class="fa-solid fa-lock-open"></i> Daily Phone Unlocks</label>
                             <input type="number" id="Daily_Unlocks" name="Daily_Unlocks" min="5" max="500" value="120" required>
                         </div>
                     </div>
 
                     <div class="step-actions">
-                        <button type="button" class="btn btn-secondary back-btn"><i class="fa-solid fa-chevron-left"></i> Back</button>
-                        <button type="button" class="btn btn-primary next-btn"><span>Next Step: Lifestyle</span> <i class="fa-solid fa-chevron-right"></i></button>
+                        <button type="button" class="btn btn-ghost back-btn"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                        <button type="button" class="btn btn-primary next-btn">
+                            <span>Lifestyle</span> <i class="fa-solid fa-arrow-right"></i>
+                            <div class="btn-shimmer"></div>
+                        </button>
                     </div>
                 </div>
 
-                <!-- STEP 3: LIFESTYLE & WELLNESS -->
+                <!-- STEP 3: LIFESTYLE -->
                 <div class="survey-step" data-step="3">
-                    <h2 class="step-title"><i class="fa-solid fa-heart-pulse"></i> Lifestyle & Stress Levels</h2>
-                    <p class="step-desc">Help us gauge your sleep, exercise, study load, and stress.</p>
+                    <div class="step-header">
+                        <div class="step-icon-circle green"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <div>
+                            <h2 class="step-title">Lifestyle & Stress Levels</h2>
+                            <p class="step-desc">Help us gauge your sleep, exercise, study load, and stress.</p>
+                        </div>
+                    </div>
 
                     <div class="form-grid">
-                        <div class="input-group">
+                        <div class="field-card">
                             <label for="Study_Hours">
-                                <i class="fa-solid fa-book-open"></i> Daily Study Hours: <span id="study_val" class="slider-val">4.5</span> hrs
+                                <i class="fa-solid fa-book-open"></i> Study Hours: <span id="study_val" class="slider-val">4.5</span> hrs
                             </label>
                             <input type="range" id="Study_Hours" name="Study_Hours" min="0" max="14" step="0.5" value="4.5">
+                            <div class="range-labels"><span>0h</span><span>14h</span></div>
                         </div>
 
-                        <div class="input-group">
+                        <div class="field-card">
                             <label for="Physical_Activity_Hours">
-                                <i class="fa-solid fa-person-running"></i> Daily Physical Activity: <span id="activity_val" class="slider-val">1.5</span> hrs
+                                <i class="fa-solid fa-person-running"></i> Activity: <span id="activity_val" class="slider-val">1.5</span> hrs
                             </label>
                             <input type="range" id="Physical_Activity_Hours" name="Physical_Activity_Hours" min="0" max="8" step="0.25" value="1.5">
+                            <div class="range-labels"><span>0h</span><span>8h</span></div>
                         </div>
 
-                        <div class="input-group">
+                        <div class="field-card">
                             <label for="Sleep_Hours_Per_Night">
-                                <i class="fa-solid fa-moon"></i> Sleep Per Night: <span id="sleep_val" class="slider-val">7.0</span> hrs
+                                <i class="fa-solid fa-moon"></i> Sleep: <span id="sleep_val" class="slider-val">7.0</span> hrs
                             </label>
                             <input type="range" id="Sleep_Hours_Per_Night" name="Sleep_Hours_Per_Night" min="2" max="12" step="0.5" value="7.0">
+                            <div class="range-labels"><span>2h</span><span>12h</span></div>
                         </div>
 
-                        <div class="input-group">
-                            <label for="Stress_Level"><i class="fa-solid fa-gauge-high"></i> Current Perceived Stress Level</label>
-                            <select id="Stress_Level" name="Stress_Level" required>
-                                <option value="Low">Low Stress</option>
-                                <option value="Medium" selected>Medium Stress</option>
-                                <option value="High">High Stress</option>
-                                <option value="Very High">Very High Stress</option>
-                            </select>
+                        <div class="field-card">
+                            <label for="Stress_Level"><i class="fa-solid fa-gauge-high"></i> Stress Level</label>
+                            <div class="select-wrap">
+                                <select id="Stress_Level" name="Stress_Level" required>
+                                    <option value="Low">Low Stress</option>
+                                    <option value="Medium" selected>Medium Stress</option>
+                                    <option value="High">High Stress</option>
+                                    <option value="Very High">Very High Stress</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down select-arrow"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div class="step-actions">
-                        <button type="button" class="btn btn-secondary back-btn"><i class="fa-solid fa-chevron-left"></i> Back</button>
-                        <button type="submit" class="btn btn-primary btn-large submit-btn">
-                            <span>Analyze Results with ML</span>
+                        <button type="button" class="btn btn-ghost back-btn"><i class="fa-solid fa-chevron-left"></i> Back</button>
+                        <button type="submit" class="btn btn-hero submit-btn">
+                            <span>Analyze with ML</span>
                             <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            <div class="btn-shimmer"></div>
                         </button>
                     </div>
                 </div>
@@ -245,55 +335,68 @@
             </form>
         </section>
 
-        <!-- LOADING MODAL / OVERLAY -->
+        <!-- LOADING OVERLAY -->
         <div id="loading-overlay" class="loading-overlay hidden">
-            <div class="loading-box glass-card">
-                <div class="spinner"></div>
-                <h3>Predicting Mental Health Score...</h3>
-                <p>Feeding inputs into Random Forest Regression Model</p>
+            <div class="loading-card">
+                <div class="dna-loader">
+                    <div class="dna-dot"></div>
+                    <div class="dna-dot"></div>
+                    <div class="dna-dot"></div>
+                    <div class="dna-dot"></div>
+                    <div class="dna-dot"></div>
+                </div>
+                <h3>Analyzing Your Data...</h3>
+                <p>Feeding inputs into Random Forest ML Model</p>
+                <div class="loading-progress">
+                    <div class="loading-progress-fill"></div>
+                </div>
             </div>
         </div>
 
-        <!-- SECTION 3: RESULTS DASHBOARD SCREEN -->
-        <section id="results-screen" class="glass-card hidden-screen">
-            <div class="results-header">
-                <div>
-                    <span class="dashboard-badge"><i class="fa-solid fa-circle-check"></i> Assessment Complete</span>
-                    <h2 class="dashboard-title">Mental Health Analysis for <span id="res-user-name">User</span></h2>
-                    <div class="model-info-badge" style="margin-top: 8px; font-size: 0.85rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid fa-gears" style="color: var(--primary-purple);"></i>
-                        <span>Model: <strong id="model-display-name" style="color: var(--text-main);">Mental_Health_Model.pkl</strong> (<span id="model-display-type">RandomForestRegressor</span>)</span>
+        <!-- ═══════ SECTION 3: RESULTS DASHBOARD ═══════ -->
+        <section id="results-screen" class="screen hidden-screen">
+            <div class="results-top">
+                <div class="results-header-info">
+                    <span class="result-chip success"><i class="fa-solid fa-circle-check"></i> Assessment Complete</span>
+                    <h2 class="results-title">Mental Health Analysis for <span id="res-user-name" class="gradient-text">User</span></h2>
+                    <div class="model-meta">
+                        <i class="fa-solid fa-microchip"></i>
+                        <span>Model: <strong id="model-display-name">Mental_Health_Model.pkl</strong> &middot; <span id="model-display-type">RandomForestRegressor</span></span>
                     </div>
                 </div>
-                <button id="btn-print" class="btn btn-outline" onclick="window.print()">
-                    <i class="fa-solid fa-print"></i> Export / Print
+                <button id="btn-print" class="btn btn-outline-glow" onclick="window.print()">
+                    <i class="fa-solid fa-download"></i> Export
                 </button>
             </div>
 
             <div class="dashboard-grid">
                 
-                <!-- SCORE GAUGE CARD -->
-                <div class="dashboard-card main-score-card">
-                    <h3>Mental Health Index</h3>
-                    
-                    <div class="score-circle-wrapper">
-                        <svg class="score-svg" viewBox="0 0 100 100">
-                            <circle class="score-bg-circle" cx="50" cy="50" r="42"></circle>
-                            <circle id="score-progress-circle" class="score-fg-circle" cx="50" cy="50" r="42"></circle>
+                <!-- MAIN SCORE CARD -->
+                <div class="dash-card score-card">
+                    <h3><i class="fa-solid fa-heartbeat"></i> Mental Health Index</h3>
+                    <div class="score-ring-wrap">
+                        <svg class="score-svg" viewBox="0 0 120 120">
+                            <defs>
+                                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#6366f1"/>
+                                    <stop offset="100%" style="stop-color:#a855f7"/>
+                                </linearGradient>
+                            </defs>
+                            <circle class="score-bg-ring" cx="60" cy="60" r="50"></circle>
+                            <circle id="score-progress-circle" class="score-fg-ring" cx="60" cy="60" r="50"></circle>
                         </svg>
-                        <div class="score-text-container">
-                            <span id="score-display-num" class="score-val">0.0</span>
-                            <span class="score-max">/ 10</span>
+                        <div class="score-inner">
+                            <span id="score-display-num" class="score-number">0.0</span>
+                            <span class="score-label">/ 10</span>
                         </div>
                     </div>
-
-                    <div id="status-badge" class="status-badge">Calculating...</div>
-                    <p id="summary-text" class="summary-desc">Analyzing model feedback...</p>
+                    <div id="status-badge" class="status-chip">Calculating...</div>
+                    <p id="summary-text" class="score-summary">Analyzing model feedback...</p>
                 </div>
 
-                <!-- RADAR & SUB-SCORES CARD -->
-                <div class="dashboard-card chart-card">
-                    <h3>Wellness Balance Breakdown</h3>
+                <!-- RADAR CHART CARD -->
+                <div class="dash-card chart-card">
+                    <h3><i class="fa-solid fa-radar"></i> Wellness Balance Breakdown</h3>
                     <div class="chart-container">
                         <canvas id="wellnessRadarChart"></canvas>
                     </div>
@@ -301,18 +404,19 @@
 
             </div>
 
-            <!-- SECOND ROW: TIPS & RECOMMENDATIONS -->
-            <div class="dashboard-section">
-                <h3 class="section-heading"><i class="fa-solid fa-lightbulb"></i> Personalized AI Insights & Recommendations</h3>
-                <div id="recommendations-grid" class="tips-grid">
+            <!-- RECOMMENDATIONS SECTION -->
+            <div class="recs-section">
+                <h3 class="section-title"><i class="fa-solid fa-lightbulb"></i> Personalized AI Insights & Recommendations</h3>
+                <div id="recommendations-grid" class="recs-grid">
                     <!-- Dynamic tips rendered here -->
                 </div>
             </div>
 
-            <!-- DASHBOARD ACTIONS -->
-            <div class="dashboard-actions">
-                <button id="retake-btn" class="btn btn-secondary btn-large">
+            <!-- ACTIONS -->
+            <div class="result-actions">
+                <button id="retake-btn" class="btn btn-primary btn-lg">
                     <i class="fa-solid fa-rotate-left"></i> Retake Assessment
+                    <div class="btn-shimmer"></div>
                 </button>
             </div>
         </section>
@@ -320,12 +424,15 @@
     </main>
 
     <footer class="footer">
-        <div class="container footer-content">
-            <p>&copy; 2026 MindPulse ML Project. Trained on Student Social Media & Mental Health Impact Dataset.</p>
+        <div class="container footer-inner">
+            <div class="footer-brand">
+                <i class="fa-solid fa-brain"></i> Mind<span class="gradient-text">Pulse</span>
+            </div>
+            <p>&copy; 2026 MindPulse ML Project &middot; Trained on Student Social Media & Mental Health Impact Dataset</p>
         </div>
     </footer>
 
     <!-- Custom JS Script -->
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="/static/js/main.js"></script>
 </body>
 </html>
