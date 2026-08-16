@@ -3,7 +3,12 @@ import joblib
 import pandas as pd
 from flask import Flask, render_template, request, jsonify
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 
 # Load the trained model pipeline
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'Mental_Health_Model.pkl')
@@ -140,10 +145,12 @@ def calculate_insights(user_data, predicted_score):
     }
 
 @app.route('/')
+@app.route('/api/index')
 def index():
     return render_template('index.html')
 
 @app.route('/api/options', methods=['GET'])
+@app.route('/api/index/api/options', methods=['GET'])
 def get_options():
     return jsonify({
         "countries": ['India', 'USA', 'Canada', 'Australia', 'UK', 'Germany', 'Turkey', 'Mexico', 'France', 'Other'],
@@ -155,6 +162,7 @@ def get_options():
     })
 
 @app.route('/api/predict', methods=['POST'])
+@app.route('/api/index/api/predict', methods=['POST'])
 def predict():
     if model is None:
         return jsonify({"error": "ML Model is not loaded properly on the server."}), 500
