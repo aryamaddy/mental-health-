@@ -144,10 +144,6 @@ def calculate_insights(user_data, predicted_score):
         }
     }
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
 @app.route('/api/options', methods=['GET'])
 def get_options():
     return jsonify({
@@ -158,6 +154,17 @@ def get_options():
         "purposes": ['Entertainment', 'Education', 'Networking', 'Gaming', 'Work / Business', 'Other'],
         "stress_levels": ['Low', 'Medium', 'High', 'Very High']
     })
+
+@app.route('/', defaults={'path': ''}, methods=['GET', 'POST'])
+@app.route('/<path:path>', methods=['GET', 'POST'])
+def catch_all(path):
+    clean_path = (path or '').strip('/')
+    if request.method == 'POST' or clean_path.endswith('api/predict') or clean_path == 'predict':
+        return predict()
+    elif clean_path.endswith('api/options') or clean_path == 'options':
+        return get_options()
+    else:
+        return render_template('index.html')
 
 @app.route('/api/predict', methods=['POST'])
 def predict():
