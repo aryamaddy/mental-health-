@@ -145,12 +145,10 @@ def calculate_insights(user_data, predicted_score):
     }
 
 @app.route('/')
-@app.route('/api/index')
 def index():
     return render_template('index.html')
 
 @app.route('/api/options', methods=['GET'])
-@app.route('/api/index/api/options', methods=['GET'])
 def get_options():
     return jsonify({
         "countries": ['India', 'USA', 'Canada', 'Australia', 'UK', 'Germany', 'Turkey', 'Mexico', 'France', 'Other'],
@@ -162,7 +160,6 @@ def get_options():
     })
 
 @app.route('/api/predict', methods=['POST'])
-@app.route('/api/index/api/predict', methods=['POST'])
 def predict():
     if model is None:
         return jsonify({"error": "ML Model is not loaded properly on the server."}), 500
