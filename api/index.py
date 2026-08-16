@@ -24,6 +24,7 @@ class VercelWSGIMiddleware:
         if not path or path == '':
             path = '/'
             
+        environ['SCRIPT_NAME'] = ''
         environ['PATH_INFO'] = path
         return self.app(environ, start_response)
 
